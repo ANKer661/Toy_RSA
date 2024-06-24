@@ -7,3 +7,11 @@ def quick_power(base: int, exponent: int, mod: int) -> int:
         exponent >>= 1
         base = (base * base) % mod
     return result
+
+
+def extend_gcd(a: int, b: int) -> tuple[int, int]:
+    if b == 0:
+        return a, 1, 0
+
+    gcd, x, y = extend_gcd(b, a % b)
+    return gcd, y, x - y * (a // b)
