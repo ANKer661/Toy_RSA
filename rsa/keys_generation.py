@@ -28,17 +28,31 @@ def generate_pqn(bits: int) -> tuple[int, int, int]:
 
 
 def find_multiplicative_inverse(num: int, mod: int) -> int:
+    """Find the (positive) multiplicative inverse of a number under a given modulus."""
     _, result, _ = extend_gcd(num, mod)
     return (result % mod + mod) % mod
 
 
 def generate_keypair(bits: int) -> dict[str, tuple[str, str]]:
+    """
+    Generate RSA public key and private key.
+
+    Args:
+        bits (int): The desired bit length of the modulus n.
+
+    Returns:
+        dict[str, tuple[str, str]]: A dictionary containing the `public` and `private` keys.
+                                    The keys are represented as tuples of hexadecimal strings.
+    """
     p, q, n = generate_pqn(bits)
     phi = (p - 1) * (q - 1)
-
+    
+    # Use a common choice for public exponent
     e = 65537
+    while e >= phi:
+        e = generate_prime(bits=bits - 1)
     while math.gcd(phi, e) != 1:
-        e = generate_prime(bits=15)
+        e = generate_prime(bits=min(15, bits - 1))
 
     d = find_multiplicative_inverse(e, phi)
 
