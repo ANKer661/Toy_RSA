@@ -1,6 +1,6 @@
 import unittest
 from rsa.keys_generation import generate_keypair
-from rsa.rsa_oprations import rsa_pipeline
+from rsa.rsa_operations import rsa_pipeline
 
 
 class TestRSAOprations(unittest.TestCase):
