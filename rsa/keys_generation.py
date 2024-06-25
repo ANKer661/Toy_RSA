@@ -57,6 +57,6 @@ def generate_keypair(bits: int) -> dict[str, tuple[str, str]]:
     d = find_multiplicative_inverse(e, phi)
 
     return {
-        "public": (hex(e), hex(n)),
-        "private": (hex(d), hex(n))
+        "public": (f"{e:x}", f"{n:x}"),
+        "private": (f"{d:x}", f"{n:x}")
     }
