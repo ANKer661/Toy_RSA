@@ -1,5 +1,16 @@
+from dataclasses import dataclass
 from .utils import quick_power
-from .keys_generation import generate_keypair
+
+
+@dataclass
+class RSAOutputs:
+    """
+    Data class to store intermediate results of RSA encryption and decryption.
+    """
+    message_as_number: str
+    encrypted_message: str
+    decrypted_message: str
+    final_message: str
 
 
 def pre_processing(message: str, encoding: str = "utf-8") -> str:
@@ -42,7 +53,7 @@ def encrypt(m: str, public_keys: tuple[str, str]) -> str:
     return f"{quick_power(int(m), int(e, 16), int(n, 16)):x}"
 
 
-def decrypt(encrypted_m: str, private_keys: tuple[str, str]) -> str:
+def decrypt(encrypted_message: str, private_keys: tuple[str, str]) -> str:
     """
     Decrypts an RSA-encrypted message.
     RSA decryption: m = (m')**d % n
@@ -60,8 +71,8 @@ def decrypt(encrypted_m: str, private_keys: tuple[str, str]) -> str:
         "20079"
     """
     d, n = private_keys
-    encrypted_m, d, n = int(encrypted_m, 16), int(d, 16), int(n, 16)
-    return quick_power(encrypted_m, d, n)
+    encrypted_message, d, n = int(encrypted_message, 16), int(d, 16), int(n, 16)
+    return quick_power(encrypted_message, d, n)
 
 
 def post_processing(message: str, encoding: str = "utf-8"):
@@ -79,13 +90,13 @@ def post_processing(message: str, encoding: str = "utf-8"):
         >>> post_processing("20079")
         "No"
     """
-    decrypted_int = int(message)
-    byte_length = (decrypted_int.bit_length() + 7) // 8
-    decrypted_bytes = decrypted_int.to_bytes(byte_length, "big")
+    decrypted_message_as_number = int(message)
+    byte_length = (decrypted_message_as_number.bit_length() + 7) // 8
+    decrypted_bytes = decrypted_message_as_number.to_bytes(byte_length, "big")
     return decrypted_bytes.decode(encoding)
 
 
-def rsa_pipeline(m: str, keys: dict[str, tuple[str, str]]) -> str:
+def rsa_pipeline(m: str, keys: dict[str, tuple[str, str]]) -> tuple[str, RSAOutputs]:
     """
     Perform RSA encryption and decryption on a message.
 
@@ -95,17 +106,25 @@ def rsa_pipeline(m: str, keys: dict[str, tuple[str, str]]) -> str:
                                            The keys are represented as tuples of hexadecimal strings.
 
     Returns:
-        str: The decrypted message after encryption and decryption.
+        tuple[str, RSAOutputs]: A tuple containing the decrypted message and an instance of RSAOutputs
+                                with intermediate results.
 
     Example:
         >>> keys = {
         ...     'public': ('10001', '200376b73967fad6d618371a07ab'), 
         ...     'private': ('26ee0f5fa09fa08d59e7295ac09', '200376b73967fad6d618371a07ab')
         ... }
-        >>> rsa_pipeline("Hello, World!", keys)
+        >>> rsa_pipeline("Hello, World!", keys)[0]
         'Hello, World!'
     """
-    m = pre_processing(m)
-    m_p = encrypt(m, keys["public"])
-    m = decrypt(m_p, keys["private"])
-    return post_processing(m)
+    message_as_number = pre_processing(m)
+    encrypted_message = encrypt(message_as_number, keys["public"])
+    decrypted_message = decrypt(encrypted_message, keys["private"])
+    final_message = post_processing(decrypted_message)
+
+    return final_message, RSAOutputs(
+        message_as_number,
+        encrypted_message,
+        decrypted_message,
+        final_message
+    )
