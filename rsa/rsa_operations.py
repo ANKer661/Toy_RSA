@@ -32,13 +32,13 @@ def pre_processing(message: str, encoding: str = "utf-8") -> str:
     return f"{int.from_bytes(message_bytes, 'big'):x}"
 
 
-def encrypt(m: str, public_keys: tuple[str, str]) -> str:
+def encrypt(message_as_number: str, public_keys: tuple[str, str]) -> str:
     """
     Encrypts a given message with the provided public key (e, n).
     RSA encryption: m' = m**e % n
 
     Args:
-        m (str): The message to be encrypted, represented as a string of digits.
+        message_as_number (str): The message to be encrypted, represented as a hexadecimal string.
         public_keys (tuple[str, str]): A tuple containing the public key
                                        (e, n) in hexadecimal format.
 
@@ -50,7 +50,16 @@ def encrypt(m: str, public_keys: tuple[str, str]) -> str:
         "40610"
     """
     e, n = public_keys
-    return f"{quick_power(int(m, 16), int(e, 16), int(n, 16)):x}"
+    e, n = int(e, 16), int(n, 16)
+    message_as_number = int(message_as_number, 16)
+
+    if message_as_number >= n:
+        raise ValueError("Message is too long for the given key size")
+
+    encrypted_message = quick_power(
+        message_as_number, e, n
+    )
+    return f"{encrypted_message:x}"
 
 
 def decrypt(encrypted_message: str, private_keys: tuple[str, str]) -> str:
@@ -59,7 +68,7 @@ def decrypt(encrypted_message: str, private_keys: tuple[str, str]) -> str:
     RSA decryption: m = (m')**d % n
 
     Args:
-        encrypted_m (str): The encrypted message, represented as a hexadecimal string.
+        encrypted_message (str): The encrypted message, represented as a hexadecimal string.
         private_keys (tuple[str, str]): A tuple containing the private key
                                         (d, n) in hexadecimal format.
 
@@ -80,7 +89,7 @@ def post_processing(message: str, encoding: str = "utf-8"):
     Convert an integer back to a byte sequence and decode it to a string.
 
     Args:
-        message (str): The decrypted message represented as a string of digits.
+        message (str): The decrypted message represented as a hexadecimal string.
         encoding (str): The encoding used to decode the bytes back to a string (default: "utf-8").
 
     Returns:
