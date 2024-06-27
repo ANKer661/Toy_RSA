@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from .utils import quick_power
 
 
@@ -7,6 +8,7 @@ class RSAOutputs:
     """
     Data class to store intermediate results of RSA encryption and decryption.
     """
+
     message_as_number: str
     encrypted_message: str
     decrypted_message: str
@@ -46,7 +48,7 @@ def encrypt(message_as_number: str, public_keys: tuple[str, str]) -> str:
         str: The encrypted message, represented as a hexadecimal string.
 
     Examples:
-        >>> encrypt("20079", ('10001', '9e7ef'))
+        >>> encrypt("20079", ("10001", "9e7ef"))
         "40610"
     """
     e, n = public_keys
@@ -56,9 +58,7 @@ def encrypt(message_as_number: str, public_keys: tuple[str, str]) -> str:
     if message_as_number >= n:
         raise ValueError("Message is too long for the given key size")
 
-    encrypted_message = quick_power(
-        message_as_number, e, n
-    )
+    encrypted_message = quick_power(message_as_number, e, n)
     return f"{encrypted_message:x}"
 
 
@@ -76,7 +76,7 @@ def decrypt(encrypted_message: str, private_keys: tuple[str, str]) -> str:
         str: The decrypted message represented as a hexadecimal string.
 
     Examples:
-        >>> decrypt("40610", ('38a89', '9e7ef'))
+        >>> decrypt("40610", ("38a89", "9e7ef"))
         "20079"
     """
     d, n = private_keys
@@ -120,8 +120,11 @@ def rsa_pipeline(m: str, keys: dict[str, tuple[str, str]]) -> tuple[str, RSAOutp
 
     Example:
         >>> keys = {
-        ...     'public': ('10001', '200376b73967fad6d618371a07ab'), 
-        ...     'private': ('26ee0f5fa09fa08d59e7295ac09', '200376b73967fad6d618371a07ab')
+        ...     "public": ("10001", "200376b73967fad6d618371a07ab"),
+        ...     "private": (
+        ...         "26ee0f5fa09fa08d59e7295ac09",
+        ...         "200376b73967fad6d618371a07ab",
+        ...     ),
         ... }
         >>> rsa_pipeline("Hello, World!", keys)[0]
         'Hello, World!'
@@ -132,8 +135,5 @@ def rsa_pipeline(m: str, keys: dict[str, tuple[str, str]]) -> tuple[str, RSAOutp
     final_message = post_processing(decrypted_message)
 
     return final_message, RSAOutputs(
-        message_as_number,
-        encrypted_message,
-        decrypted_message,
-        final_message
+        message_as_number, encrypted_message, decrypted_message, final_message
     )

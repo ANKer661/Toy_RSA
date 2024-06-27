@@ -25,7 +25,7 @@ def extend_gcd(a: int, b: int) -> tuple[int, int, int]:
     Returns:
         tuple[int, int, int]: A tuple (gcd, x, y) where gcd is the greatest
                               common divisor of a and b, and x and y are the
-                              coefficients of Bézout's identity, i.e., 
+                              coefficients of Bézout's identity, i.e.,
                               gcd = a * x + b * y.
     """
     if b == 0:

@@ -1,4 +1,5 @@
 import math
+
 from .primes import generate_prime
 from .utils import extend_gcd
 
@@ -16,7 +17,7 @@ def generate_pqn(bits: int) -> tuple[int, int, int]:
                               and n is their product.
     """
     p = q = n = 0
-    upper_limit = 2 ** bits
+    upper_limit = 2**bits
     lower_limit = 2 ** (bits - 1) - 1
 
     while not (lower_limit < n < upper_limit):
@@ -46,7 +47,7 @@ def generate_keypair(bits: int) -> dict[str, tuple[str, str]]:
     """
     p, q, n = generate_pqn(bits)
     phi = (p - 1) * (q - 1)
-    
+
     # Use a common choice for public exponent
     e = 65537
     while e >= phi:
@@ -56,7 +57,4 @@ def generate_keypair(bits: int) -> dict[str, tuple[str, str]]:
 
     d = find_multiplicative_inverse(e, phi)
 
-    return {
-        "public": (f"{e:x}", f"{n:x}"),
-        "private": (f"{d:x}", f"{n:x}")
-    }
+    return {"public": (f"{e:x}", f"{n:x}"), "private": (f"{d:x}", f"{n:x}")}

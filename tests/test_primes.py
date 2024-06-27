@@ -1,9 +1,9 @@
 import unittest
-from rsa.primes import miller_rabin_test, generate_prime
+
+from rsa.primes import generate_prime, miller_rabin_test
 
 
 class TestPrimes(unittest.TestCase):
-
     def test_miller_rabin_test(self):
         """Test the miller_rabin_test function."""
         # Known primes

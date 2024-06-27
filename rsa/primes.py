@@ -1,4 +1,5 @@
 import secrets
+
 from .utils import quick_power
 
 

@@ -1,17 +1,14 @@
 import unittest
+
 from rsa.keys_generation import generate_keypair
 from rsa.rsa_operations import rsa_pipeline
 
 
 class TestRSAOprations(unittest.TestCase):
-
     def test_rsa_pipeline(self):
         for _ in range(8):
             keys = generate_keypair(1024)
-            self.assertEqual(
-                rsa_pipeline("Hello, World!", keys)[0],
-                "Hello, World!"
-            )
+            self.assertEqual(rsa_pipeline("Hello, World!", keys)[0], "Hello, World!")
             m = "The Python interpreter has a number of functions"
             self.assertEqual(rsa_pipeline(m, keys)[0], m)
             m = "Hi John."
